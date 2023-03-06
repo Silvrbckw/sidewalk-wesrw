@@ -22,5 +22,5 @@ class StubProxy(object):
     def add_call(self, funcname, *args, **kwargs):
         callname = funcname
         if self.name:
-            callname = "{}.{}".format(self.name, funcname)
+            callname = f"{self.name}.{funcname}"
         return self.stub.add_call(callname, *args, **kwargs)

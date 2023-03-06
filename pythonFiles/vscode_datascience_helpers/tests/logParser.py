@@ -23,10 +23,7 @@ timestamp_regex = re.compile(r"\d{4}-\d{2}-\d{2}T.*\dZ")
 
 
 def stripTimestamp(line: str):
-    match = timestamp_regex.match(line)
-    if match:
-        return line[match.end() :]
-    return line
+    return line[match.end() :] if (match := timestamp_regex.match(line)) else line
 
 
 def readStripLines(f: TextIOWrapper):
@@ -63,18 +60,18 @@ def splitByPid(testlog):
                     pid = int(match.group(1))
 
                     # See if we've created a log for this pid or not
-                    if not pid in pids:
+                    if pid not in pids:
                         pids.add(pid)
-                        logFile = "{}_{}.log".format(baseFile, pid)
-                        print("Writing to new log: " + logFile)
+                        logFile = f"{baseFile}_{pid}.log"
+                        print(f"Writing to new log: {logFile}")
                         logs[pid] = Path(logFile).open(mode="w")
 
                 # Add this line to the log
                 if pid != None:
                     logs[pid].write(line)
     # Close all of the open logs
-    for key in logs:
-        logs[key].close()
+    for value in logs.values():
+        value.close()
 
 
 def doWork(args):

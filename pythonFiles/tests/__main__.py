@@ -23,12 +23,15 @@ def parse_args():
     ns = vars(args)
 
     if remainder:
-        for arg in remainder:
-            if arg.startswith("-") and arg not in ("-v", "--verbose", "-h", "--help"):
-                specific = False
-                break
-        else:
-            specific = True
+        specific = next(
+            (
+                False
+                for arg in remainder
+                if arg.startswith("-")
+                and arg not in ("-v", "--verbose", "-h", "--help")
+            ),
+            True,
+        )
     else:
         specific = False
     args.specific = specific
@@ -48,8 +51,7 @@ def main(pytestargs, markers=None, specific=False):
         pytestargs.insert(0, marker)
         pytestargs.insert(0, "-m")
 
-    ec = pytest.main(pytestargs)
-    return ec
+    return pytest.main(pytestargs)
 
 
 if __name__ == "__main__":

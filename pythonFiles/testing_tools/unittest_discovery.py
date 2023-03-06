@@ -22,10 +22,14 @@ def get_sourceline(obj):
         except:
             return "*"
 
-    for i, v in enumerate(s):
-        if v.strip().startswith(("def", "async def")):
-            return str(n + i)
-    return "*"
+    return next(
+        (
+            str(n + i)
+            for i, v in enumerate(s)
+            if v.strip().startswith(("def", "async def"))
+        ),
+        "*",
+    )
 
 
 def generate_test_cases(suite):
@@ -33,8 +37,7 @@ def generate_test_cases(suite):
         if isinstance(test, unittest.TestCase):
             yield test
         else:
-            for test_case in generate_test_cases(test):
-                yield test_case
+            yield from generate_test_cases(test)
 
 
 try:

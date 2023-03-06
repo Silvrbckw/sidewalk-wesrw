@@ -102,7 +102,7 @@ def install_requirements(venv_path: str, requirements: List[str]) -> None:
 
 
 def install_toml(venv_path: str, extras: List[str]) -> None:
-    args = "." if len(extras) == 0 else f".[{','.join(extras)}]"
+    args = f".[{','.join(extras)}]" if extras else "."
     run_process(
         [venv_path, "-m", "pip", "install", "-e", args],
         "CREATE_VENV.PIP_FAILED_INSTALL_PYPROJECT",
@@ -120,7 +120,7 @@ def upgrade_pip(venv_path: str) -> None:
 def add_gitignore(name: str) -> None:
     git_ignore = CWD / name / ".gitignore"
     if not file_exists(git_ignore):
-        print("Creating: " + os.fspath(git_ignore))
+        print(f"Creating: {os.fspath(git_ignore)}")
         with open(git_ignore, "w") as f:
             f.write("*")
 

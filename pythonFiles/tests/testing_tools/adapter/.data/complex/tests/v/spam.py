@@ -1,9 +1,9 @@
 
 def test_simple(self):
-    assert True
+    pass
 
 
 class TestSimple(object):
 
     def test_simple(self):
-        assert True
+        pass
