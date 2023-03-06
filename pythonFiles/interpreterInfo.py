@@ -4,10 +4,10 @@
 import json
 import sys
 
-obj = {}
-obj["versionInfo"] = tuple(sys.version_info)
-obj["sysPrefix"] = sys.prefix
-obj["sysVersion"] = sys.version
-obj["is64Bit"] = sys.maxsize > 2**32
-
+obj = {
+    "versionInfo": tuple(sys.version_info),
+    "sysPrefix": sys.prefix,
+    "sysVersion": sys.version,
+    "is64Bit": sys.maxsize > 2**32,
+}
 print(json.dumps(obj))

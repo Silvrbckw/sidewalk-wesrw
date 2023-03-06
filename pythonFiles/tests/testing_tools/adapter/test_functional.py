@@ -49,10 +49,11 @@ def _run_adapter(cmd, tool, *cliargs, **kwargs):
         kwds["stderr"] = subprocess.STDOUT
     argv.append("--cache-clear")
     print(
-        "running {!r}".format(" ".join(arg.rpartition(CWD + "/")[-1] for arg in argv))
+        "running {!r}".format(
+            " ".join(arg.rpartition(f"{CWD}/")[-1] for arg in argv)
+        )
     )
-    output = subprocess.check_output(argv, universal_newlines=True, **kwds)
-    return output
+    return subprocess.check_output(argv, universal_newlines=True, **kwds)
 
 
 def fix_test_order(tests):
@@ -79,16 +80,17 @@ def fix_source(tests, testid, srcfile, lineno):
         raise KeyError("test {!r} not found".format(testid))
     if not srcfile:
         srcfile = test["source"].rpartition(":")[0]
-    test["source"] = fix_path("{}:{}".format(srcfile, lineno))
+    test["source"] = fix_path(f"{srcfile}:{lineno}")
 
 
 def sorted_object(obj):
     if isinstance(obj, dict):
         return sorted((key, sorted_object(obj[key])) for key in obj.keys())
-    if isinstance(obj, list):
-        return sorted((sorted_object(x) for x in obj))
-    else:
-        return obj
+    return (
+        sorted((sorted_object(x) for x in obj))
+        if isinstance(obj, list)
+        else obj
+    )
 
 
 # Note that these tests are skipped if util.PATH_SEP is not os.path.sep.

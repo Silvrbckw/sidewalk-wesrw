@@ -117,8 +117,7 @@ class StubPytestItem(util.StubProxy):
 
         attrs.setdefault("user_properties", [])
 
-        slots = getattr(type(self), "__slots__", None)
-        if slots:
+        if slots := getattr(type(self), "__slots__", None):
             for name, value in attrs.items():
                 if name in self.__slots__:
                     setattr(self, name, value)
@@ -135,10 +134,9 @@ class StubPytestItem(util.StubProxy):
 
     def __getattr__(self, name):
         if not self._debugging:
-            self.add_call(name + " (attr)", None, None)
-        if name == "function":
-            if not self._hasfunc:
-                raise AttributeError(name)
+            self.add_call(f"{name} (attr)", None, None)
+        if name == "function" and not self._hasfunc:
+            raise AttributeError(name)
 
         def func(*args, **kwargs):
             self.add_call(name, args or None, kwargs or None)
@@ -188,7 +186,7 @@ class StubPytestSession(util.StubProxy):
         super(StubPytestSession, self).__init__(stub, "pytest.Session")
 
     def __getattr__(self, name):
-        self.add_call(name + " (attr)", None, None)
+        self.add_call(f"{name} (attr)", None, None)
 
         def func(*args, **kwargs):
             self.add_call(name, args or None, kwargs or None)
@@ -201,7 +199,7 @@ class StubPytestConfig(util.StubProxy):
         super(StubPytestConfig, self).__init__(stub, "pytest.Config")
 
     def __getattr__(self, name):
-        self.add_call(name + " (attr)", None, None)
+        self.add_call(f"{name} (attr)", None, None)
 
         def func(*args, **kwargs):
             self.add_call(name, args or None, kwargs or None)
@@ -595,7 +593,7 @@ class CollectorTests(unittest.TestCase):
                 ),
                 create_stub_function_item(
                     stub,
-                    nodeid=relfile2 + "::All::BasicTests::test_first",
+                    nodeid=f"{relfile2}::All::BasicTests::test_first",
                     name="test_first",
                     originalname=None,
                     location=(relfile2, 31, "All.BasicTests.test_first"),
@@ -604,7 +602,7 @@ class CollectorTests(unittest.TestCase):
                 ),
                 create_stub_function_item(
                     stub,
-                    nodeid=relfile2 + "::All::BasicTests::test_each[1+2-3]",
+                    nodeid=f"{relfile2}::All::BasicTests::test_each[1+2-3]",
                     name="test_each[1+2-3]",
                     originalname="test_each",
                     location=(relfile2, 62, "All.BasicTests.test_each[1+2-3]"),
@@ -652,7 +650,7 @@ class CollectorTests(unittest.TestCase):
                             func="SpamTests.test_one",
                             sub=None,
                         ),
-                        source="{}:{}".format(relfile1, 13),
+                        source=f"{relfile1}:13",
                         markers=None,
                         parentid="./test_spam.py::SpamTests",
                     ),
@@ -676,7 +674,7 @@ class CollectorTests(unittest.TestCase):
                             func="SpamTests.test_other",
                             sub=None,
                         ),
-                        source="{}:{}".format(relfile1, 20),
+                        source=f"{relfile1}:20",
                         markers=None,
                         parentid="./test_spam.py::SpamTests",
                     ),
@@ -699,7 +697,7 @@ class CollectorTests(unittest.TestCase):
                             func="test_all",
                             sub=None,
                         ),
-                        source="{}:{}".format(relfile1, 145),
+                        source=f"{relfile1}:145",
                         markers=None,
                         parentid="./test_spam.py",
                     ),
@@ -723,7 +721,7 @@ class CollectorTests(unittest.TestCase):
                             func="test_each",
                             sub=["[10-10]"],
                         ),
-                        source="{}:{}".format(relfile1, 274),
+                        source=f"{relfile1}:274",
                         markers=None,
                         parentid="./test_spam.py::test_each",
                     ),
@@ -755,7 +753,7 @@ class CollectorTests(unittest.TestCase):
                             func="All.BasicTests.test_first",
                             sub=None,
                         ),
-                        source="{}:{}".format(adapter_util.fix_relpath(relfile2), 32),
+                        source=f"{adapter_util.fix_relpath(relfile2)}:32",
                         markers=None,
                         parentid="./x/y/z/test_eggs.py::All::BasicTests",
                     ),
@@ -792,7 +790,7 @@ class CollectorTests(unittest.TestCase):
                             func="All.BasicTests.test_each",
                             sub=["[1+2-3]"],
                         ),
-                        source="{}:{}".format(adapter_util.fix_relpath(relfile2), 63),
+                        source=f"{adapter_util.fix_relpath(relfile2)}:63",
                         markers=["expected-failure", "skip", "skip-if"],
                         parentid="./x/y/z/test_eggs.py::All::BasicTests::test_each",
                     ),
@@ -810,13 +808,13 @@ class CollectorTests(unittest.TestCase):
         session.items = [
             create_stub_function_item(
                 stub,
-                nodeid=relfile + "::SpamTests::test_spam",
+                nodeid=f"{relfile}::SpamTests::test_spam",
                 name="test_spam",
                 originalname=None,
                 location=(relfile, 12, "SpamTests.test_spam"),
                 path=adapter_util.PATH_JOIN(testroot, relfile),
                 function=FakeFunc("test_spam"),
-            ),
+            )
         ]
         collector = _discovery.TestCollector(tests=discovered)
 
@@ -832,7 +830,11 @@ class CollectorTests(unittest.TestCase):
                     None,
                     dict(
                         parents=[
-                            ("./x/y/z/test_eggs.py::SpamTests", "SpamTests", "suite"),
+                            (
+                                "./x/y/z/test_eggs.py::SpamTests",
+                                "SpamTests",
+                                "suite",
+                            ),
                             ("./x/y/z/test_eggs.py", "test_eggs.py", "file"),
                             ("./x/y/z", "z", "folder"),
                             ("./x/y", "y", "folder"),
@@ -848,9 +850,7 @@ class CollectorTests(unittest.TestCase):
                                 func="SpamTests.test_spam",
                                 sub=None,
                             ),
-                            source="{}:{}".format(
-                                adapter_util.fix_relpath(relfile), 13
-                            ),
+                            source=f"{adapter_util.fix_relpath(relfile)}:13",
                             markers=None,
                             parentid="./x/y/z/test_eggs.py::SpamTests",
                         ),
@@ -869,29 +869,28 @@ class CollectorTests(unittest.TestCase):
         session.items = [
             create_stub_doctest_item(
                 stub,
-                nodeid=doctestfile + "::test_doctest.txt",
+                nodeid=f"{doctestfile}::test_doctest.txt",
                 name="test_doctest.txt",
                 location=(doctestfile, 0, "[doctest] test_doctest.txt"),
                 path=adapter_util.PATH_JOIN(testroot, doctestfile),
             ),
-            # With --doctest-modules
             create_stub_doctest_item(
                 stub,
-                nodeid=relfile + "::test_eggs",
+                nodeid=f"{relfile}::test_eggs",
                 name="test_eggs",
                 location=(relfile, 0, "[doctest] test_eggs"),
                 path=adapter_util.PATH_JOIN(testroot, relfile),
             ),
             create_stub_doctest_item(
                 stub,
-                nodeid=relfile + "::test_eggs.TestSpam",
+                nodeid=f"{relfile}::test_eggs.TestSpam",
                 name="test_eggs.TestSpam",
                 location=(relfile, 12, "[doctest] test_eggs.TestSpam"),
                 path=adapter_util.PATH_JOIN(testroot, relfile),
             ),
             create_stub_doctest_item(
                 stub,
-                nodeid=relfile + "::test_eggs.TestSpam.TestEggs",
+                nodeid=f"{relfile}::test_eggs.TestSpam.TestEggs",
                 name="test_eggs.TestSpam.TestEggs",
                 location=(relfile, 27, "[doctest] test_eggs.TestSpam.TestEggs"),
                 path=adapter_util.PATH_JOIN(testroot, relfile),
@@ -923,9 +922,7 @@ class CollectorTests(unittest.TestCase):
                                 relfile=adapter_util.fix_relpath(doctestfile),
                                 func=None,
                             ),
-                            source="{}:{}".format(
-                                adapter_util.fix_relpath(doctestfile), 1
-                            ),
+                            source=f"{adapter_util.fix_relpath(doctestfile)}:1",
                             markers=[],
                             parentid="./x/test_doctest.txt",
                         ),
@@ -950,7 +947,7 @@ class CollectorTests(unittest.TestCase):
                                 relfile=adapter_util.fix_relpath(relfile),
                                 func=None,
                             ),
-                            source="{}:{}".format(adapter_util.fix_relpath(relfile), 1),
+                            source=f"{adapter_util.fix_relpath(relfile)}:1",
                             markers=[],
                             parentid="./x/y/z/test_eggs.py",
                         ),
@@ -975,9 +972,7 @@ class CollectorTests(unittest.TestCase):
                                 relfile=adapter_util.fix_relpath(relfile),
                                 func=None,
                             ),
-                            source="{}:{}".format(
-                                adapter_util.fix_relpath(relfile), 13
-                            ),
+                            source=f"{adapter_util.fix_relpath(relfile)}:13",
                             markers=[],
                             parentid="./x/y/z/test_eggs.py",
                         ),
@@ -1002,9 +997,7 @@ class CollectorTests(unittest.TestCase):
                                 relfile=adapter_util.fix_relpath(relfile),
                                 func=None,
                             ),
-                            source="{}:{}".format(
-                                adapter_util.fix_relpath(relfile), 28
-                            ),
+                            source=f"{adapter_util.fix_relpath(relfile)}:28",
                             markers=[],
                             parentid="./x/y/z/test_eggs.py",
                         ),
@@ -1022,13 +1015,13 @@ class CollectorTests(unittest.TestCase):
         session.items = [
             create_stub_function_item(
                 stub,
-                nodeid=relfile + "::SpamTests::test_spam[a-[b]-c]",
+                nodeid=f"{relfile}::SpamTests::test_spam[a-[b]-c]",
                 name="test_spam[a-[b]-c]",
                 originalname="test_spam",
                 location=(relfile, 12, "SpamTests.test_spam[a-[b]-c]"),
                 path=adapter_util.PATH_JOIN(testroot, relfile),
                 function=FakeFunc("test_spam"),
-            ),
+            )
         ]
         collector = _discovery.TestCollector(tests=discovered)
 
@@ -1049,7 +1042,11 @@ class CollectorTests(unittest.TestCase):
                                 "test_spam",
                                 "function",
                             ),
-                            ("./x/y/z/test_eggs.py::SpamTests", "SpamTests", "suite"),
+                            (
+                                "./x/y/z/test_eggs.py::SpamTests",
+                                "SpamTests",
+                                "suite",
+                            ),
                             ("./x/y/z/test_eggs.py", "test_eggs.py", "file"),
                             ("./x/y/z", "z", "folder"),
                             ("./x/y", "y", "folder"),
@@ -1065,9 +1062,7 @@ class CollectorTests(unittest.TestCase):
                                 func="SpamTests.test_spam",
                                 sub=["[a-[b]-c]"],
                             ),
-                            source="{}:{}".format(
-                                adapter_util.fix_relpath(relfile), 13
-                            ),
+                            source=f"{adapter_util.fix_relpath(relfile)}:13",
                             markers=None,
                             parentid="./x/y/z/test_eggs.py::SpamTests::test_spam",
                         ),
@@ -1085,13 +1080,13 @@ class CollectorTests(unittest.TestCase):
         session.items = [
             create_stub_function_item(
                 stub,
-                nodeid=relfile + "::SpamTests::Ham::Eggs::test_spam",
+                nodeid=f"{relfile}::SpamTests::Ham::Eggs::test_spam",
                 name="test_spam",
                 originalname=None,
                 location=(relfile, 12, "SpamTests.Ham.Eggs.test_spam"),
                 path=adapter_util.PATH_JOIN(testroot, relfile),
                 function=FakeFunc("test_spam"),
-            ),
+            )
         ]
         collector = _discovery.TestCollector(tests=discovered)
 
@@ -1112,8 +1107,16 @@ class CollectorTests(unittest.TestCase):
                                 "Eggs",
                                 "suite",
                             ),
-                            ("./x/y/z/test_eggs.py::SpamTests::Ham", "Ham", "suite"),
-                            ("./x/y/z/test_eggs.py::SpamTests", "SpamTests", "suite"),
+                            (
+                                "./x/y/z/test_eggs.py::SpamTests::Ham",
+                                "Ham",
+                                "suite",
+                            ),
+                            (
+                                "./x/y/z/test_eggs.py::SpamTests",
+                                "SpamTests",
+                                "suite",
+                            ),
                             ("./x/y/z/test_eggs.py", "test_eggs.py", "file"),
                             ("./x/y/z", "z", "folder"),
                             ("./x/y", "y", "folder"),
@@ -1129,9 +1132,7 @@ class CollectorTests(unittest.TestCase):
                                 func="SpamTests.Ham.Eggs.test_spam",
                                 sub=None,
                             ),
-                            source="{}:{}".format(
-                                adapter_util.fix_relpath(relfile), 13
-                            ),
+                            source=f"{adapter_util.fix_relpath(relfile)}:13",
                             markers=None,
                             parentid="./x/y/z/test_eggs.py::SpamTests::Ham::Eggs",
                         ),
@@ -1179,13 +1180,13 @@ class CollectorTests(unittest.TestCase):
             elif locfile == "\\":
                 locfile = fileid.replace("/", "\\")
             if fspath == "/":
-                fspath = (testroot + "/" + fileid).replace("\\", "/")
+                fspath = f"{testroot}/{fileid}".replace("\\", "/")
             elif fspath == "\\":
-                fspath = (testroot + "/" + fileid).replace("/", "\\")
+                fspath = f"{testroot}/{fileid}".replace("/", "\\")
             session.items.append(
                 create_stub_function_item(
                     stub,
-                    nodeid=fileid + "::test_spam",
+                    nodeid=f"{fileid}::test_spam",
                     name="test_spam",
                     originalname=None,
                     location=(locfile, 12, "test_spam"),
@@ -1444,13 +1445,13 @@ class CollectorTests(unittest.TestCase):
         session.items = [
             create_stub_function_item(
                 stub,
-                nodeid=relfile + "::SpamTests::()::()::test_spam",
+                nodeid=f"{relfile}::SpamTests::()::()::test_spam",
                 name="test_spam",
                 originalname=None,
                 location=(relfile, 12, "SpamTests.test_spam"),
                 path=adapter_util.PATH_JOIN(testroot, relfile),
                 function=FakeFunc("test_spam"),
-            ),
+            )
         ]
         collector = _discovery.TestCollector(tests=discovered)
 
@@ -1466,7 +1467,11 @@ class CollectorTests(unittest.TestCase):
                     None,
                     dict(
                         parents=[
-                            ("./x/y/z/test_eggs.py::SpamTests", "SpamTests", "suite"),
+                            (
+                                "./x/y/z/test_eggs.py::SpamTests",
+                                "SpamTests",
+                                "suite",
+                            ),
                             ("./x/y/z/test_eggs.py", "test_eggs.py", "file"),
                             ("./x/y/z", "z", "folder"),
                             ("./x/y", "y", "folder"),
@@ -1482,9 +1487,7 @@ class CollectorTests(unittest.TestCase):
                                 func="SpamTests.test_spam",
                                 sub=[],
                             ),
-                            source="{}:{}".format(
-                                adapter_util.fix_relpath(relfile), 13
-                            ),
+                            source=f"{adapter_util.fix_relpath(relfile)}:13",
                             markers=None,
                             parentid="./x/y/z/test_eggs.py::SpamTests",
                         ),
@@ -1502,13 +1505,13 @@ class CollectorTests(unittest.TestCase):
         session.items = [
             create_stub_function_item(
                 stub,
-                nodeid=relfile + "::SpamTests:::()::test_spam",
+                nodeid=f"{relfile}::SpamTests:::()::test_spam",
                 name="test_spam",
                 originalname=None,
                 location=(relfile, 12, "SpamTests.test_spam"),
                 path=adapter_util.PATH_JOIN(testroot, relfile),
                 function=FakeFunc("test_spam"),
-            ),
+            )
         ]
         collector = _discovery.TestCollector(tests=discovered)
 
@@ -1524,7 +1527,11 @@ class CollectorTests(unittest.TestCase):
                     None,
                     dict(
                         parents=[
-                            ("./x/y/z/test_eggs.py::SpamTests", "SpamTests", "suite"),
+                            (
+                                "./x/y/z/test_eggs.py::SpamTests",
+                                "SpamTests",
+                                "suite",
+                            ),
                             ("./x/y/z/test_eggs.py", "test_eggs.py", "file"),
                             ("./x/y/z", "z", "folder"),
                             ("./x/y", "y", "folder"),
@@ -1540,9 +1547,7 @@ class CollectorTests(unittest.TestCase):
                                 func="SpamTests.test_spam",
                                 sub=[],
                             ),
-                            source="{}:{}".format(
-                                adapter_util.fix_relpath(relfile), 13
-                            ),
+                            source=f"{adapter_util.fix_relpath(relfile)}:13",
                             markers=None,
                             parentid="./x/y/z/test_eggs.py::SpamTests",
                         ),
@@ -1563,7 +1568,7 @@ class CollectorTests(unittest.TestCase):
         session.items = [
             create_stub_function_item(
                 stub,
-                nodeid=relfile + "::SpamTests::test_spam",
+                nodeid=f"{relfile}::SpamTests::test_spam",
                 name="test_spam",
                 originalname=None,
                 location=(srcfile, 12, "SpamTests.test_spam"),
@@ -1572,7 +1577,7 @@ class CollectorTests(unittest.TestCase):
             ),
             create_stub_function_item(
                 stub,
-                nodeid=relfile + "::test_ham",
+                nodeid=f"{relfile}::test_ham",
                 name="test_ham",
                 originalname=None,
                 location=(srcfile, 3, "test_ham"),
@@ -1594,7 +1599,11 @@ class CollectorTests(unittest.TestCase):
                     None,
                     dict(
                         parents=[
-                            ("./x/y/z/test_eggs.py::SpamTests", "SpamTests", "suite"),
+                            (
+                                "./x/y/z/test_eggs.py::SpamTests",
+                                "SpamTests",
+                                "suite",
+                            ),
                             ("./x/y/z/test_eggs.py", "test_eggs.py", "file"),
                             ("./x/y/z", "z", "folder"),
                             ("./x/y", "y", "folder"),
@@ -1610,9 +1619,7 @@ class CollectorTests(unittest.TestCase):
                                 func="SpamTests.test_spam",
                                 sub=None,
                             ),
-                            source="{}:{}".format(
-                                adapter_util.fix_relpath(srcfile), 13
-                            ),
+                            source=f"{adapter_util.fix_relpath(srcfile)}:13",
                             markers=None,
                             parentid="./x/y/z/test_eggs.py::SpamTests",
                         ),
@@ -1638,7 +1645,7 @@ class CollectorTests(unittest.TestCase):
                                 func="test_ham",
                                 sub=None,
                             ),
-                            source="{}:{}".format(adapter_util.fix_relpath(srcfile), 4),
+                            source=f"{adapter_util.fix_relpath(srcfile)}:4",
                             markers=None,
                             parentid="./x/y/z/test_eggs.py",
                         ),

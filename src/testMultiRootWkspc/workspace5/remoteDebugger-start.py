@@ -8,10 +8,8 @@ def main():
     sys.stderr.flush()
     # Give the debugger some time to add a breakpoint.
     time.sleep(5)
-    for i in range(1):
+    for _ in range(1):
         time.sleep(0.5)
-        pass
-
     print('this is print')
 
 main()

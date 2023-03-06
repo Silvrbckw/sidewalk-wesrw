@@ -1,15 +1,7 @@
-if True:
-    print(1)
-else: print(2)
-
+print(1)
 print('🔨')
 print(3)
 print(3)
 
-if True:
-    print(1)
-else: print(2)
-
-if True:
-    print(1)
-else: print(2)
+print(1)
+print(1)

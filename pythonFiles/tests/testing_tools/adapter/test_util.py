@@ -66,12 +66,14 @@ class FilePathTests(unittest.TestCase):
         if found:
             self.fail(
                 os.linesep.join(
-                    [
-                        "",
-                        "Please only use path-related API from testing_tools.adapter.util.",
-                        'Found use of "os.path" in the following files:',
-                    ]
-                    + ["  " + file for file in found]
+                    (
+                        [
+                            "",
+                            "Please only use path-related API from testing_tools.adapter.util.",
+                            'Found use of "os.path" in the following files:',
+                        ]
+                        + [f"  {file}" for file in found]
+                    )
                 )
             )
 

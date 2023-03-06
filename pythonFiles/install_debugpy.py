@@ -29,11 +29,11 @@ def _get_package_data():
 
 
 def _get_debugger_wheel_urls(data, version):
-    return list(
+    return [
         r["url"]
         for r in data["releases"][version]
         if _contains(r["url"], DEBUGGER_PYTHON_ABI_VERSIONS)
-    )
+    ]
 
 
 def _download_and_extract(root, url, version):

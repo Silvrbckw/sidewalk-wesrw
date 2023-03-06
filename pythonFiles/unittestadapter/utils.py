@@ -45,8 +45,7 @@ def get_test_case(suite):
         if isinstance(test, unittest.TestCase):
             yield test
         else:
-            for test_case in get_test_case(test):
-                yield test_case
+            yield from get_test_case(test)
 
 
 def get_source_line(obj) -> str:
@@ -60,12 +59,14 @@ def get_source_line(obj) -> str:
         except:
             return "*"
 
-    # Return the line number of the first line of the test case definition.
-    for i, v in enumerate(sourcelines):
-        if v.strip().startswith(("def", "async def")):
-            return str(lineno + i)
-
-    return "*"
+    return next(
+        (
+            str(lineno + i)
+            for i, v in enumerate(sourcelines)
+            if v.strip().startswith(("def", "async def"))
+        ),
+        "*",
+    )
 
 
 # Helper functions for test tree building.
@@ -75,7 +76,7 @@ def build_test_node(path: str, name: str, type_: TestNodeTypeEnum) -> TestNode:
     """Build a test node with no children. A test node can be a folder, a file or a class."""
     ## figure out if we are folder, file, or class
     id_gen = path
-    if type_ == TestNodeTypeEnum.folder or type_ == TestNodeTypeEnum.file:
+    if type_ in [TestNodeTypeEnum.folder, TestNodeTypeEnum.file]:
         id_gen = path
     else:
         # means we have to build test node for class

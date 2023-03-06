@@ -29,8 +29,7 @@ def main(logdir):
     sys.stdout.flush()
 
 
-if __name__ == "__main__":
-    if len(sys.argv) == 2:
-        logdir = str(sys.argv[1])
-        sys.stdout.write("Starting TensorBoard with logdir %s" % (logdir))
-        main(logdir)
+if __name__ == "__main__" and len(sys.argv) == 2:
+    logdir = str(sys.argv[1])
+    sys.stdout.write(f"Starting TensorBoard with logdir {logdir}")
+    main(logdir)

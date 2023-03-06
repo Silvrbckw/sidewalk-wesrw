@@ -30,7 +30,7 @@ class Example3(object):
         #Comments should have a space after the hash.
         if bar:
             bar += 1
-            bar = bar * bar
+            bar *= bar
             return bar
         else:
             some_string = """

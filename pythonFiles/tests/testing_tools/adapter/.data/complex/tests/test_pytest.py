@@ -4,7 +4,7 @@ import pytest
 
 
 def test_simple():
-    assert True
+    pass
 
 
 def test_failure():
@@ -60,7 +60,7 @@ def test_multiple_markers():
 
 for i in range(3):
     def func():
-        assert True
+        pass
     globals()['test_dynamic_{}'.format(i + 1)] = func
 del func
 
@@ -68,7 +68,7 @@ del func
 class TestSpam(object):
 
     def test_simple():
-        assert True
+        pass
 
     @pytest.mark.skip
     def test_skipped(self):
@@ -79,7 +79,7 @@ class TestSpam(object):
         class TestEggs(object):
 
             def test_simple():
-                assert True
+                pass
 
             class TestNoop1(object):
                 pass
@@ -91,7 +91,7 @@ class TestSpam(object):
 class TestEggs(object):
 
     def test_simple():
-        assert True
+        pass
 
 
 # legend for parameterized test names:
@@ -102,7 +102,7 @@ class TestEggs(object):
 
 @pytest.mark.parametrize('', [()])
 def test_param_01():
-    assert True
+    pass
 
 
 @pytest.mark.parametrize('x', [(1,)])
@@ -162,7 +162,7 @@ def test_param_23_raises(x, catch):
 class TestParam(object):
 
     def test_simple():
-        assert True
+        pass
 
     @pytest.mark.parametrize('x', [(1,), (1.0,), (1+0j,)])
     def test_param_13(self, x):
@@ -195,7 +195,7 @@ def test_fixture(spamfix):
 
 @pytest.mark.usefixtures('spamfix')
 def test_mark_fixture():
-    assert True
+    pass
 
 
 @pytest.mark.parametrize('x', [(1,), (1.0,), (1+0j,)])
@@ -224,4 +224,4 @@ class TestNoop3(object):
 class MyTests(object):  # does not match default name pattern
 
     def test_simple():
-        assert True
+        pass

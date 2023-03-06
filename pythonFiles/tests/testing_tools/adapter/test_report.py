@@ -34,10 +34,10 @@ class ReportDiscoveredTests(unittest.TestCase):
                     relfile=relfile,
                     func="test_spam",
                 ),
-                source="{}:{}".format(relfile, 10),
+                source=f"{relfile}:10",
                 markers=[],
                 parentid="file#1",
-            ),
+            )
         ]
         parents = [
             ParentInfo(
@@ -71,7 +71,7 @@ class ReportDiscoveredTests(unittest.TestCase):
                     {
                         "id": "test#1",
                         "name": "test_spam",
-                        "source": "{}:{}".format(relfile, 10),
+                        "source": f"{relfile}:10",
                         "markers": [],
                         "parentid": "file#1",
                     }
@@ -98,17 +98,17 @@ class ReportDiscoveredTests(unittest.TestCase):
         relfile1 = relpath1[2:]
         tests = [
             SingleTestInfo(
-                id=relfileid1 + "::test_spam",
+                id=f"{relfileid1}::test_spam",
                 name="test_spam",
                 path=SingleTestPath(
                     root=testroot1,
                     relfile=relfile1,
                     func="test_spam",
                 ),
-                source="{}:{}".format(relfile1, 10),
+                source=f"{relfile1}:10",
                 markers=[],
                 parentid=relfileid1,
-            ),
+            )
         ]
         parents = [
             ParentInfo(
@@ -140,14 +140,14 @@ class ReportDiscoveredTests(unittest.TestCase):
                 ],
                 "tests": [
                     {
-                        "id": relfileid1 + "::test_spam",
+                        "id": f"{relfileid1}::test_spam",
                         "name": "test_spam",
-                        "source": "{}:{}".format(relfile1, 10),
+                        "source": f"{relfile1}:10",
                         "markers": [],
                         "parentid": relfileid1,
                     }
                 ],
-            },
+            }
         ]
         # the second root
         testroot2 = fix_path("/x/y/z")
@@ -157,17 +157,17 @@ class ReportDiscoveredTests(unittest.TestCase):
         tests.extend(
             [
                 SingleTestInfo(
-                    id=relfileid2 + "::BasicTests::test_first",
+                    id=f"{relfileid2}::BasicTests::test_first",
                     name="test_first",
                     path=SingleTestPath(
                         root=testroot2,
                         relfile=relfile2,
                         func="BasicTests.test_first",
                     ),
-                    source="{}:{}".format(relfile2, 61),
+                    source=f"{relfile2}:61",
                     markers=[],
-                    parentid=relfileid2 + "::BasicTests",
-                ),
+                    parentid=f"{relfileid2}::BasicTests",
+                )
             ]
         )
         parents.extend(
@@ -194,7 +194,7 @@ class ReportDiscoveredTests(unittest.TestCase):
                     parentid="./w",
                 ),
                 ParentInfo(
-                    id=relfileid2 + "::BasicTests",
+                    id=f"{relfileid2}::BasicTests",
                     kind="suite",
                     name="BasicTests",
                     root=testroot2,
@@ -223,7 +223,7 @@ class ReportDiscoveredTests(unittest.TestCase):
                             "parentid": "./w",
                         },
                         {
-                            "id": relfileid2 + "::BasicTests",
+                            "id": f"{relfileid2}::BasicTests",
                             "kind": "suite",
                             "name": "BasicTests",
                             "parentid": relfileid2,
@@ -231,14 +231,14 @@ class ReportDiscoveredTests(unittest.TestCase):
                     ],
                     "tests": [
                         {
-                            "id": relfileid2 + "::BasicTests::test_first",
+                            "id": f"{relfileid2}::BasicTests::test_first",
                             "name": "test_first",
-                            "source": "{}:{}".format(relfile2, 61),
+                            "source": f"{relfile2}:61",
                             "markers": [],
-                            "parentid": relfileid2 + "::BasicTests",
+                            "parentid": f"{relfileid2}::BasicTests",
                         }
                     ],
-                },
+                }
             ]
         )
 

@@ -25,7 +25,7 @@ while not os.path.exists(filename):
         if i == 600:
             sys.stdout.write('\n = 1 minute =\n')
         else:
-            sys.stdout.write('\n = {} minutes =\n'.format(i // 600))
+            sys.stdout.write(f'\n = {i // 600} minutes =\n')
     elif i % 100 == 0:
         sys.stdout.write('\n')
     sys.stdout.write('.')
