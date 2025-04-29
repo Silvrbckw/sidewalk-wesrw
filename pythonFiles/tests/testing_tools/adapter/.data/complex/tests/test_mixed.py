@@ -3,7 +3,7 @@ import unittest
 
 
 def test_top_level():
-    assert True
+    pass
 
 
 @pytest.mark.skip
@@ -14,13 +14,13 @@ def test_skipped():
 class TestMySuite(object):
 
     def test_simple(self):
-        assert True
+        pass
 
 
 class MyTests(unittest.TestCase):
 
     def test_simple(self):
-        assert True
+        pass
 
     @pytest.mark.skip
     def test_skipped(self):

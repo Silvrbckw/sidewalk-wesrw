@@ -13,7 +13,7 @@ def _check_binaries(dir_path):
         "x86_64-linux-gnu.so",
     )
 
-    binaries = list(p for p in os.listdir(dir_path) if p.endswith(expected_endswith))
+    binaries = [p for p in os.listdir(dir_path) if p.endswith(expected_endswith)]
 
     assert len(binaries) == len(expected_endswith)
 

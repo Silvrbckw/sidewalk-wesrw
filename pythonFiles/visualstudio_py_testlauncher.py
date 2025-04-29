@@ -69,10 +69,7 @@ class _TestOutput(object):
 
     @property
     def name(self):
-        if self.is_stdout:
-            return "<stdout>"
-        else:
-            return "<stderr>"
+        return "<stdout>" if self.is_stdout else "<stderr>"
 
     def __getattr__(self, name):
         return getattr(self.old_out, name)
@@ -297,18 +294,14 @@ def main():
         from ctypes import c_char, windll
         from time import sleep
 
-        while True:
-            if windll.kernel32.IsDebuggerPresent() != 0:
-                break
+        while windll.kernel32.IsDebuggerPresent() == 0:
             sleep(0.1)
         try:
             debugger_helper = windll["Microsoft.PythonTools.Debugger.Helper.x86.dll"]
         except WindowsError:
             debugger_helper = windll["Microsoft.PythonTools.Debugger.Helper.x64.dll"]
         isTracing = c_char.in_dll(debugger_helper, "isTracing")
-        while True:
-            if isTracing.value != 0:
-                break
+        while isTracing.value == 0:
             sleep(0.1)
 
     cov = None
@@ -385,7 +378,7 @@ def main():
         if cov is not None:
             cov.stop()
             cov.save()
-            cov.xml_report(outfile=opts.coverage + ".xml", omit=__file__)
+            cov.xml_report(outfile=f"{opts.coverage}.xml", omit=__file__)
         if _channel is not None:
             _channel.send_event(name="done")
             _channel.socket.close()

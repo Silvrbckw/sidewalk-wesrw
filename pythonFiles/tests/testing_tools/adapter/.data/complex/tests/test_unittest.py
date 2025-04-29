@@ -46,7 +46,7 @@ class MyTests(unittest.TestCase):
     def test_with_nested_subtests(self):
         for i in range(3):
             with self.subtest(i):  # This is invalid under Py2.
-                for j in range(3):
+                for _ in range(3):
                     with self.subtest(i):  # This is invalid under Py2.
                         self.assertTrue(True)
 

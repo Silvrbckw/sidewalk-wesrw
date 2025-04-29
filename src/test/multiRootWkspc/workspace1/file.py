@@ -40,13 +40,9 @@ class Foo(object):
         # pylint: disable=no-member
         # no error
         print (self.bla)
-        if self.blop:
-            # pylint: enable=no-member
-            # error
-            print (self.blip)
-        else:
-            # no error
-            print (self.blip)
+        # pylint: enable=no-member
+        # error
+        print (self.blip)
         # no error
         print (self.blip)
 
@@ -67,12 +63,8 @@ class Foo(object):
 
     def meth7(self):
         """test one line block opening disabling"""
-        if self.blop: # pylint: disable=no-member
-            # error
-            print (self.blip)
-        else:
-            # error
-            print (self.blip)
+        # error
+        print (self.blip)
         # error
         print (self.blip)
 

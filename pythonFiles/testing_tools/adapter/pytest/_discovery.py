@@ -29,27 +29,20 @@ def discover(
     with (util.hide_stdio() if hidestdio else util.noop_cm()) as stdio:
         ec = _pytest_main(pytestargs, [_plugin])
     # See: https://docs.pytest.org/en/latest/usage.html#possible-exit-codes
-    if ec == 5:
+    if ec in [5, 1]:
         # No tests were discovered.
-        pass
-    elif ec == 1:
-        # Some tests where collected but with errors.
         pass
     elif ec != 0:
         print(
-            "equivalent command: {} -m pytest {}".format(
-                sys.executable, util.shlex_unsplit(pytestargs)
-            )
+            f"equivalent command: {sys.executable} -m pytest {util.shlex_unsplit(pytestargs)}"
         )
         if hidestdio:
             print(stdio.getvalue(), file=sys.stderr)
             sys.stdout.flush()
-        raise Exception("pytest discovery failed (exit code {})".format(ec))
+        raise Exception(f"pytest discovery failed (exit code {ec})")
     if not _plugin._started:
         print(
-            "equivalent command: {} -m pytest {}".format(
-                sys.executable, util.shlex_unsplit(pytestargs)
-            )
+            f"equivalent command: {sys.executable} -m pytest {util.shlex_unsplit(pytestargs)}"
         )
         if hidestdio:
             print(stdio.getvalue(), file=sys.stderr)

@@ -35,15 +35,14 @@ linter_settings = {
 
 def main():
     invoke = sys.argv[1]
+    linter = sys.argv[2]
     if invoke == "-m":
-        linter = sys.argv[2]
         args = (
             [sys.executable, "-m", linter]
             + linter_settings[linter]["args"]
             + sys.argv[3:]
         )
     else:
-        linter = sys.argv[2]
         args = [sys.argv[3]] + linter_settings[linter]["args"] + sys.argv[4:]
 
     if hasattr(subprocess, "run"):
